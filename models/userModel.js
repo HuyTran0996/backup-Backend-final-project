@@ -51,6 +51,10 @@ const userSchema = new mongoose.Schema({
   passwordChangedAt: Date
 });
 
+// In Mongoose, isModified is a property of a Mongoose document that tracks whether a document's path has been modified. It's particularly useful in middleware functions, such as pre('save') or pre('update'), to determine if a specific field has been altered before the document is saved or updated in the database.
+
+// When you modify a field in a Mongoose document, Mongoose automatically marks that field as modified. You can check if a field is modified by using the isModified function, passing the path of the field as an argument.
+
 userSchema.pre('save', async function(next) {
   // Only run this function if password was actually modified
   if (!this.isModified('password')) return next();
