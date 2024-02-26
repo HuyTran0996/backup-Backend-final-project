@@ -8,7 +8,9 @@ router.route('/').get(authController.protect, productController.getAllProducts);
 router.route('/').post(authController.protect, productController.createProduct);
 
 router.route('/:id').get(productController.getProduct);
-router.route('/:id').patch(productController.updateProduct);
+router
+  .route('/:id')
+  .patch(productController.uploadProductPhoto, productController.updateProduct);
 router
   .route('/:id')
   .delete(
