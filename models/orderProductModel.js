@@ -21,9 +21,8 @@ const orderProductSchema = new mongoose.Schema({
     type: Number,
     required: [true, 'Please tell us your quantity number!']
   },
-  productPricexQuantity: { type: Number },
 
-  StoreID: [
+  storeID: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Store',

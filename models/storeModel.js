@@ -12,7 +12,6 @@ const storeSchema = new mongoose.Schema({
     type: String
     // required: [true, 'you must provide email of owner']
   },
-
   storeName: {
     type: String,
     required: [true, 'A store must have a name'],
@@ -24,22 +23,18 @@ const storeSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
-  imageCover: {
-    type: String
-    // required: [true, 'A store must have a cover image']
-  },
-  images: [String],
   createdAt: {
     type: Date,
     default: Date.now(),
     select: false
   },
-
   isDeleted: {
     type: Boolean,
     default: false
   },
-  deletedAt: Date
+  deletedAt: Date,
+  photo: { type: String },
+  cloudinaryId: { type: String }
 });
 
 // QUERY MIDDLEWARE

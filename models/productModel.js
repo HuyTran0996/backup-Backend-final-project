@@ -44,7 +44,9 @@ const productSchema = new mongoose.Schema({
     default: false,
     select: false
   },
-  deletedAt: Date
+  deletedAt: Date,
+  photo: { type: String },
+  cloudinaryId: { type: String }
 });
 
 // QUERY MIDDLEWARE

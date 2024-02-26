@@ -17,7 +17,13 @@ router.patch(
 router.route('/').get(userController.getAllUsers);
 
 router.route('/:id').get(userController.getUser);
-router.route('/:id').patch(userController.updateUser);
+router
+  .route('/updateMe')
+  .patch(
+    authController.protect,
+    userController.uploadUserPhoto,
+    userController.updateUser
+  );
 router.delete('/deleteMe', authController.protect, userController.deleteMe);
 
 router

@@ -140,18 +140,18 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
 });
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {
-  // 1) Get user from collection
   const user = await User.findOne({ email: req.body.email }).select(
     '+password'
   );
 
-  // 3) If so, update password
   const newPassword = `${user.email}-resetPassword-${Date.now()}`;
   user.password = newPassword;
   user.passwordConfirm = user.password;
   await user.save();
   // User.findByIdAndUpdate will NOT work as intended!
 
-  // 4) Log user in, send JWT
-  createSendToken(newPassword, 200, res);
+  res.status(200).json({
+    status: 'success',
+    newPassword
+  });
 });

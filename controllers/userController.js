@@ -3,6 +3,8 @@ const Store = require('../models/storeModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 const APIFeatures = require('../utils/apiFeatures');
+const cloudinary = require('../utils/cloudinary');
+const multerUpload = require('../utils/multer');
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -11,6 +13,8 @@ const filterObj = (obj, ...allowedFields) => {
   });
   return newObj;
 };
+
+exports.uploadUserPhoto = multerUpload.single('image');
 
 exports.getAllUsers = catchAsync(async (req, res, next) => {
   const features = new APIFeatures(User.find(), req.query)
@@ -58,6 +62,21 @@ exports.updateUser = catchAsync(async (req, res, next) => {
 
   // 2) Filtered out unwanted fields names that are not allowed to be updated
   const filteredBody = filterObj(req.body, 'name', 'phone');
+
+  if (req.file) {
+    // Check if cloudinaryId exists before attempting to delete old image
+    if (req.user.cloudinaryId) {
+      // Delete old image from cloudinary
+      await cloudinary.uploader.destroy(req.user.cloudinaryId);
+    }
+
+    //upload new image
+    const cloudinaryResult = await cloudinary.uploader.upload(req.file.path, {
+      upload_preset: process.env.CLOUDINARY_UPLOAD_PRESET
+    });
+    filteredBody.photo = cloudinaryResult.secure_url;
+    filteredBody.cloudinaryId = cloudinaryResult.public_id;
+  }
 
   // 3) Update user document
   const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {

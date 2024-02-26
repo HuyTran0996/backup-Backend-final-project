@@ -4,6 +4,8 @@ const Product = require('../models/productModel');
 const APIFeatures = require('../utils/apiFeatures');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
+const cloudinary = require('../utils/cloudinary');
+const multerUpload = require('../utils/multer');
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -12,6 +14,8 @@ const filterObj = (obj, ...allowedFields) => {
   });
   return newObj;
 };
+
+exports.uploadStorePhoto = multerUpload.single('image');
 
 exports.getAllStores = catchAsync(async (req, res, next) => {
   const features = new APIFeatures(Store.find(), req.query)
@@ -70,13 +74,27 @@ exports.createStore = catchAsync(async (req, res, next) => {
 exports.updateStore = catchAsync(async (req, res, next) => {
   // 1) Filtered out unwanted fields names that are not allowed to be updated
   const filteredBody = filterObj(req.body, 'storeName', 'address');
-  const store = await Store.findByIdAndUpdate(req.params.id, filteredBody, {
-    new: true,
-    runValidators: true
-  });
 
+  const store = await Store.findById(req.params.id);
   if (!store) {
     return next(new AppError('No  store found with that ID', 404));
+  }
+  if (req.file) {
+    // Check if cloudinaryId exists before attempting to delete old image
+    if (store.cloudinaryId) {
+      // Delete old image from cloudinary
+      await cloudinary.uploader.destroy(req.user.cloudinaryId);
+    }
+    //upload new image
+    const cloudinaryResult = await cloudinary.uploader.upload(req.file.path, {
+      upload_preset: process.env.CLOUDINARY_UPLOAD_PRESET
+    });
+    filteredBody.photo = cloudinaryResult.secure_url;
+    filteredBody.cloudinaryId = cloudinaryResult.public_id;
+    await Store.findByIdAndUpdate(req.params.id, filteredBody, {
+      new: true,
+      runValidators: true
+    });
   }
 
   res.status(200).json({

@@ -30,51 +30,28 @@ exports.createOrderProduct = catchAsync(async (req, res, next) => {
     productName: product.productName,
     productPrice: product.price,
     quantity: req.body.quantity,
-    productPricexQuantity: product.price * req.body.quantity,
-    StoreID: product.storeID,
+    storeID: product.storeID,
     storeName: product.storeName
   };
-  const orders = await Order.find({
+  const orders = await Order.findOne({
     customerID: req.user.id,
     orderStatus: 'openToAdd',
     isDeleted: false
   });
-  if (orders.length === 1) {
-    // Order found, return it
-    const orderProduct = await OrderProduct.create({
-      orderID: orders[0].id,
-      ...infor
-    });
-    res.status(200).json({
-      status: 'success',
-      data: {
-        orderProduct
-      },
-      message: 'product is added to order'
-    });
-  } else if (orders.length === 0) {
-    const newOrder = await Order.create({
-      customerID: req.user.id,
-      customerName: req.user.name
-    });
 
-    const orderProduct = await OrderProduct.create({
-      orderID: newOrder.id,
-      ...infor
-    });
+  // Order found, return it
+  const orderProduct = await OrderProduct.create({
+    orderID: orders.id,
+    ...infor
+  });
 
-    res.status(201).json({
-      status: 'success',
-      data: {
-        order: orderProduct
-      }
-    });
-  } else {
-    //Error because user can have ONLY 1 open order so they can add product, if they not yet have an order, the function will check and create for them
-    return next(
-      new AppError('something went wrong, please contact with admin', 404)
-    );
-  }
+  res.status(200).json({
+    status: 'success',
+    data: {
+      orderProduct
+    },
+    message: 'product is added to order'
+  });
 });
 
 exports.updateOrderProduct = catchAsync(async (req, res, next) => {
@@ -85,7 +62,7 @@ exports.updateOrderProduct = catchAsync(async (req, res, next) => {
     productPrice: product.price,
     quantity: req.body.quantity,
     productPricexQuantity: product.price * req.body.quantity,
-    StoreID: product.storeID,
+    storeID: product.storeID,
     storeName: product.storeName
   };
 
