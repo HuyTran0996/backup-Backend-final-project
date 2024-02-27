@@ -16,15 +16,14 @@ const createSendToken = (user, statusCode, res) => {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
     ),
-    httpOnly: true
+    httpOnly: true,
+    sameSite: 'None'
   };
-  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
-
+  //cookieOptions.secure = true means only send cookie to https domain, activate this option in real app.
+  // if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
   res.cookie('jwt', token, cookieOptions);
-
   // Remove password from output
   user.password = undefined;
-
   res.status(statusCode).json({
     status: 'success',
     token,

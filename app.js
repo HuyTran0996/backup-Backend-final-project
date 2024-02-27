@@ -19,13 +19,12 @@ const globalErrorHandler = require('./controllers/errorController');
 
 const app = express();
 app.use(cors());
+app.options('*', cors());
 
 // Set security HTTP headers
 app.use(helmet());
 
-if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev'));
-}
+app.use(morgan('dev'));
 
 // Limit 500 requests in 1 hour from same API
 const limiter = rateLimit({
