@@ -27,6 +27,7 @@ app.use(
     credentials: true
   })
 );
+
 app.options('*', cors());
 
 // Set security HTTP headers
