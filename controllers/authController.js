@@ -19,7 +19,7 @@ const createSendToken = (user, statusCode, res) => {
     httpOnly: false
   };
   //cookieOptions.secure = true means only send cookie to HTTPS domain, activate this option in real app.
-  // if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
   res.cookie('jwt', token, cookieOptions);
 
   // Remove password from output
