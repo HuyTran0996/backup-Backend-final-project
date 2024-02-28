@@ -17,7 +17,7 @@ const createSendToken = (user, statusCode, res) => {
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
     ),
     httpOnly: true,
-    sameSite: 'None'
+    sameSite: 'Lax'
   };
   //cookieOptions.secure = true means only send cookie to HTTPS domain, activate this option in real app.
   if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
