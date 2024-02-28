@@ -24,9 +24,7 @@ exports.getAllOrders = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: 'success',
     totalOrders: orders.length,
-    data: {
-      orders
-    }
+    orders
   });
 });
 
