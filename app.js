@@ -6,6 +6,7 @@ const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
+const cookieParser = require('cookie-parser');
 
 const userRouter = require('./routes/userRoutes');
 const storeRouter = require('./routes/storeRoutes');
@@ -21,7 +22,7 @@ const app = express();
 // app.use(cors());
 app.use(
   cors({
-    origin: 'http://localhost:3000',
+    origin: ['http://localhost:3000'],
     methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'HEAD'],
     credentials: true
   })
@@ -44,6 +45,7 @@ app.use('./api', limiter);
 
 // Body parser, reading data from body into req.body
 app.use(express.json({ limit: '2mb' }));
+app.use(cookieParser());
 
 // Data sanitization against NoSQL query injection
 app.use(mongoSanitize());
@@ -57,6 +59,13 @@ app.use(
     whitelist: ['price']
   })
 );
+
+// Test middleware
+app.use((req, res, next) => {
+  req.requestTime = new Date().toISOString();
+  console.log('COOKIE', req.cookies);
+  next();
+});
 
 //  ROUTES
 app.use('/api/v1/users', userRouter);

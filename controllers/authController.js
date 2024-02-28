@@ -16,9 +16,10 @@ const createSendToken = (user, statusCode, res) => {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
     ),
-    httpOnly: false
+    httpOnly: true,
+    sameSite: 'None'
   };
-  //cookieOptions.secure = true means only send cookie to https domain, activate this option in real app.
+  //cookieOptions.secure = true means only send cookie to HTTPS domain, activate this option in real app.
   // if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
   res.cookie('jwt', token, cookieOptions);
 
@@ -62,6 +63,11 @@ exports.login = catchAsync(async (req, res, next) => {
 
   // 3) If everything ok, send token to client
   createSendToken(user, 200, res);
+});
+
+exports.logout = catchAsync(async (req, res, next) => {
+  res.cookie('jwt', '', { expires: new Date(0), httpOnly: true });
+  res.status(200).json({ message: 'Logged out successfully' });
 });
 
 exports.protect = catchAsync(async (req, res, next) => {
