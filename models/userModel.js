@@ -43,8 +43,8 @@ const userSchema = new mongoose.Schema({
   },
   isDeleted: {
     type: Boolean,
-    default: false,
-    select: false
+    default: false
+    // select: false
   },
   deletedAt: Date,
   passwordChangedAt: Date,
