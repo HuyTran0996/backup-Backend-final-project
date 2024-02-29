@@ -36,13 +36,13 @@ app.use(helmet());
 app.use(morgan('dev'));
 
 // Limit 500 requests in 1 hour from same API
-const limiter = rateLimit({
-  max: 500,
-  windowMs: 60 * 60 * 1000,
-  message: 'Too many requests, please try again in an hour'
-});
+// const limiter = rateLimit({
+//   max: 500,
+//   windowMs: 60 * 60 * 1000,
+//   message: 'Too many requests, please try again in an hour'
+// });
 
-app.use('./api', limiter);
+// app.use('./api', limiter);
 
 // Body parser, reading data from body into req.body
 app.use(express.json({ limit: '2mb' }));
