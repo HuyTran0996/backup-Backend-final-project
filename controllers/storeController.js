@@ -42,9 +42,7 @@ exports.getStore = catchAsync(async (req, res, next) => {
 
   res.status(200).json({
     status: 'success',
-    data: {
-      store
-    }
+    store
   });
 });
 
@@ -97,9 +95,7 @@ exports.updateStore = catchAsync(async (req, res, next) => {
 
   res.status(200).json({
     status: 'success',
-    data: {
-      store
-    }
+    store
   });
 });
 

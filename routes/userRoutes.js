@@ -18,7 +18,6 @@ router.patch(
 router.route('/').get(userController.getAllUsers);
 
 router.route('/myInfo').get(authController.protect, userController.getMyInfo);
-
 router.route('/:id').get(userController.getUser);
 
 router
@@ -26,8 +25,12 @@ router
   .patch(
     authController.protect,
     userController.uploadUserPhoto,
-    userController.updateUser
+    userController.updateMe
   );
+router
+  .route('/updateUser/:id')
+  .patch(userController.uploadUserPhoto, userController.updateUser);
+
 router.delete('/deleteMe', authController.protect, userController.deleteMe);
 
 router
