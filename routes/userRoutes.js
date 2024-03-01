@@ -17,7 +17,10 @@ router.patch(
 
 router.route('/').get(userController.getAllUsers);
 
+router.route('/myInfo').get(authController.protect, userController.getMyInfo);
+
 router.route('/:id').get(userController.getUser);
+
 router
   .route('/updateMe')
   .patch(

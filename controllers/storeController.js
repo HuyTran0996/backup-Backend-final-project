@@ -29,9 +29,7 @@ exports.getAllStores = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: 'success',
     totalStores: stores.length,
-    data: {
-      stores
-    }
+    stores
   });
 });
 

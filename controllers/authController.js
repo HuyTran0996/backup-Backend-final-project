@@ -79,7 +79,6 @@ exports.protect = catchAsync(async (req, res, next) => {
   ) {
     token = req.headers.authorization.split(' ')[1];
   }
-
   token = signToken('65dee16ac3d7d9a0150ed1aa');
 
   if (!token) {
@@ -111,6 +110,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   // GRANT ACCESS TO PROTECTED ROUTE
   req.user = currentUser;
+  console.log(req.user);
   next();
 });
 
