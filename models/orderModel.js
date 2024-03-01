@@ -9,14 +9,6 @@ const orderSchema = new mongoose.Schema({
     }
   ],
   customerName: { type: String },
-  storeID: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Store',
-      select: false
-    }
-  ],
-  storeName: { type: String },
   price: { type: Number },
   deliverTo: { type: String },
   orderDate: { type: Date },
