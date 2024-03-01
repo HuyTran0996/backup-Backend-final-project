@@ -38,20 +38,18 @@ exports.getOrder = catchAsync(async (req, res, next) => {
   // Construct the response object outside of the res.status().json() call
   const responseData = {
     status: 'success',
-    data: {
-      order
-    }
+    order
   };
 
   // Conditionally add the orderProduct or a message if it's empty
   if (orderProduct.length === 0) {
-    responseData.data.message = 'The customer has not bought anything yet';
+    responseData.message = 'The customer has not bought anything yet';
   } else {
-    responseData.data.orderProduct = orderProduct;
+    responseData.orderProduct = orderProduct;
   }
 
   // Send the response
-  res.status(200).json({ status: 'success', responseData });
+  res.status(200).json({ status: 'success', ...responseData });
 });
 
 exports.createOrder = catchAsync(async (req, res, next) => {
