@@ -79,7 +79,7 @@ exports.updateStore = catchAsync(async (req, res, next) => {
     // Check if cloudinaryId exists before attempting to delete old image
     if (store.cloudinaryId) {
       // Delete old image from cloudinary
-      await cloudinary.uploader.destroy(req.user.cloudinaryId);
+      await cloudinary.uploader.destroy(store.cloudinaryId);
     }
     //upload new image
     const cloudinaryResult = await cloudinary.uploader.upload(req.file.path, {
@@ -87,15 +87,21 @@ exports.updateStore = catchAsync(async (req, res, next) => {
     });
     filteredBody.photo = cloudinaryResult.secure_url;
     filteredBody.cloudinaryId = cloudinaryResult.public_id;
-    await Store.findByIdAndUpdate(req.params.id, filteredBody, {
+  }
+  const storeUpdate = await Store.findByIdAndUpdate(
+    req.params.id,
+    filteredBody,
+    {
       new: true,
       runValidators: true
-    });
-  }
+    }
+  );
+
+  console.log('KET QUA LA', store);
 
   res.status(200).json({
     status: 'success',
-    store
+    store: storeUpdate
   });
 });
 

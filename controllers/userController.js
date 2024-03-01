@@ -112,6 +112,9 @@ exports.updateUser = catchAsync(async (req, res, next) => {
   const filteredBody = filterObj(req.body, 'name', 'phone');
 
   const user = await User.findById(req.params.id);
+  if (!user) {
+    return next(new AppError('No  store found with that ID', 404));
+  }
 
   if (req.file) {
     // Check if cloudinaryId exists before attempting to delete old image
