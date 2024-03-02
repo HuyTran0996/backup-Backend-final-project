@@ -8,7 +8,7 @@ router.route('/').get(authController.protect, orderController.getAllOrders);
 router.route('/').post(authController.protect, orderController.createOrder);
 
 router.route('/:id').get(authController.protect, orderController.getOrder);
-router.route('/update/:id').patch(orderController.updateOrder);
+router.route('/:id').patch(orderController.updateOrder);
 router
   .route('/cancelOrder/:id')
   .patch(authController.protect, orderController.cancelOrder);
