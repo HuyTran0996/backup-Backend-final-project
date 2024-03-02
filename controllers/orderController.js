@@ -89,16 +89,7 @@ exports.createOrder = catchAsync(async (req, res, next) => {
 
 exports.updateOrder = catchAsync(async (req, res, next) => {
   // 1) Filtered out unwanted fields names that are not allowed to be updated
-  const filteredBody = filterObj(
-    req.body,
-    'storeID',
-    'storeName',
-    'price',
-    'deliverTo',
-    'orderDate',
-    'orderStatus',
-    'updatedAt'
-  );
+  const filteredBody = filterObj(req.body, 'deliverTo', 'orderStatus');
   const order = await Order.findByIdAndUpdate(req.params.id, filteredBody, {
     new: true,
     runValidators: true
@@ -110,9 +101,27 @@ exports.updateOrder = catchAsync(async (req, res, next) => {
 
   res.status(200).json({
     status: 'success',
-    data: {
-      order
+    order
+  });
+});
+
+exports.cancelOrder = catchAsync(async (req, res, next) => {
+  const order = await Order.findByIdAndUpdate(
+    req.params.id,
+    { orderStatus: 'canceled', cancelBy: req.user.name },
+    {
+      new: true,
+      runValidators: true
     }
+  );
+
+  if (!order) {
+    return next(new AppError('No order found with that ID', 404));
+  }
+
+  res.status(200).json({
+    status: 'success',
+    order
   });
 });
 

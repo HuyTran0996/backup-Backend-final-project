@@ -16,10 +16,10 @@ const orderSchema = new mongoose.Schema({
     type: String,
     enum: [
       'openToAdd',
+      'sentOrderToStore',
       'delivering',
       'delivered',
-      'canceledByCustomer',
-      'canceledByStore'
+      'canceled'
     ],
     default: 'openToAdd'
   },
@@ -28,6 +28,7 @@ const orderSchema = new mongoose.Schema({
     default: Date.now(),
     select: false
   },
+  cancelBy: { type: String },
   isDeleted: {
     type: Boolean,
     default: false,
