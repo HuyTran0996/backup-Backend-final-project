@@ -77,6 +77,8 @@ exports.protect = catchAsync(async (req, res, next) => {
   ) {
     token = req.headers.authorization.split(' ')[1];
   }
+
+  //Deploy nhớ xóa chổ này
   token = signToken('65dee16ac3d7d9a0150ed1aa');
 
   if (!token) {
