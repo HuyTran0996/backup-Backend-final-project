@@ -97,8 +97,6 @@ exports.updateStore = catchAsync(async (req, res, next) => {
     }
   );
 
-  console.log('KET QUA LA', store);
-
   res.status(200).json({
     status: 'success',
     store: storeUpdate
