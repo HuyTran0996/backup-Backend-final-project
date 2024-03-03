@@ -49,6 +49,9 @@ const productSchema = new mongoose.Schema({
   cloudinaryId: { type: String }
 });
 
+// Adding a text index to the productName and description fields
+productSchema.index({ productName: 'text' });
+
 // QUERY MIDDLEWARE
 
 productSchema.pre(/^find/, function(next) {

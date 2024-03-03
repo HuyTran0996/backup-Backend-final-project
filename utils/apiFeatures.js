@@ -15,6 +15,13 @@ class APIFeatures {
 
     this.query = this.query.find(JSON.parse(queryStr));
 
+    // Add text search if a search term is provided
+    if (this.queryString.search) {
+      this.query = this.query.find({
+        $text: { $search: this.queryString.search }
+      });
+    }
+
     return this;
   }
 
