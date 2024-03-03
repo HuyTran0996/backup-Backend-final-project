@@ -28,11 +28,11 @@ const productSchema = new mongoose.Schema({
     type: Number,
     required: [true, 'A product must have a price']
   },
-  imageCover: {
-    type: String
-    // required: [true, 'A store must have a cover image']
+  unit: {
+    type: String,
+    required: [true, 'A product must have a unit']
   },
-  images: { type: String },
+
   createdAt: {
     type: Date,
     default: Date.now(),

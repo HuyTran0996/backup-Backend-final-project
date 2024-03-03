@@ -28,9 +28,7 @@ exports.getAllProducts = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: 'success',
     results: products.length,
-    data: {
-      products
-    }
+    products
   });
 });
 
@@ -43,9 +41,7 @@ exports.getProduct = catchAsync(async (req, res, next) => {
 
   res.status(200).json({
     status: 'success',
-    data: {
-      product
-    }
+    product
   });
 });
 
@@ -66,9 +62,7 @@ exports.createProduct = catchAsync(async (req, res, next) => {
 
   res.status(201).json({
     status: 'success',
-    data: {
-      product: newProduct
-    }
+    product: newProduct
   });
 });
 
@@ -81,7 +75,7 @@ exports.updateProduct = catchAsync(async (req, res, next) => {
     'productName'
   );
 
-  const product = await Store.findById(req.params.id);
+  let product = await Store.findById(req.params.id);
   if (!product) {
     return next(new AppError('No product found with that ID', 404));
   }
@@ -97,7 +91,7 @@ exports.updateProduct = catchAsync(async (req, res, next) => {
     });
     filteredBody.photo = cloudinaryResult.secure_url;
     filteredBody.cloudinaryId = cloudinaryResult.public_id;
-    await Product.findByIdAndUpdate(req.params.id, filteredBody, {
+    product = await Product.findByIdAndUpdate(req.params.id, filteredBody, {
       new: true,
       runValidators: true
     });
@@ -105,9 +99,7 @@ exports.updateProduct = catchAsync(async (req, res, next) => {
 
   res.status(200).json({
     status: 'success',
-    data: {
-      product
-    }
+    product
   });
 });
 
