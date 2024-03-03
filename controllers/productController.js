@@ -70,12 +70,13 @@ exports.updateProduct = catchAsync(async (req, res, next) => {
   // 1) Filtered out unwanted fields names that are not allowed to be updated
   const filteredBody = filterObj(
     req.body,
-    'price',
+    'productName',
     'description',
-    'productName'
+    'price',
+    'unit'
   );
 
-  let product = await Store.findById(req.params.id);
+  let product = await Product.findById(req.params.id);
   if (!product) {
     return next(new AppError('No product found with that ID', 404));
   }

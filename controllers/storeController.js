@@ -96,6 +96,12 @@ exports.updateStore = catchAsync(async (req, res, next) => {
       runValidators: true
     }
   );
+  const product = await Product.updateMany({
+    storeName: storeUpdate.storeName
+  });
+  if (!product) {
+    return;
+  }
 
   res.status(200).json({
     status: 'success',
