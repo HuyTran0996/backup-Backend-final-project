@@ -15,6 +15,7 @@ const productSchema = new mongoose.Schema({
     trim: true,
     maxlength: [40, 'A product name must have less or equal then 40 characters']
   },
+  normalizedProductName: { type: String, select: false },
   description: {
     type: String,
     required: [true, 'A product must have a description'],
@@ -48,9 +49,6 @@ const productSchema = new mongoose.Schema({
   photo: { type: String },
   cloudinaryId: { type: String }
 });
-
-// Adding a text index to the productName and description fields
-productSchema.index({ productName: 'text' });
 
 // QUERY MIDDLEWARE
 

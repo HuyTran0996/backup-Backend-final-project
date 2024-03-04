@@ -17,12 +17,24 @@ const filterObj = (obj, ...allowedFields) => {
 exports.uploadProductPhoto = multerUpload.single('image');
 
 exports.getAllProducts = catchAsync(async (req, res, next) => {
-  const features = new APIFeatures(Product.find(), req.query)
-    .filter()
-    .sort()
-    .limitFields()
-    .paginate();
-  const products = await features.query;
+  let products;
+  if (req.query.search) {
+    const normalizedSearch = req.query.search
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase();
+
+    const regex = new RegExp(normalizedSearch, 'i');
+
+    products = await Product.find({ normalizedProductName: { $regex: regex } });
+  } else {
+    const features = new APIFeatures(Product.find(), req.query)
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
+    products = await features.query;
+  }
 
   // SEND RESPONSE
   res.status(200).json({
@@ -52,12 +64,16 @@ exports.createProduct = catchAsync(async (req, res, next) => {
       new AppError('You have no store, create your store first', 404)
     );
   }
-
+  const normalizedProductName = req.body.productName
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase();
   // Include the owner's ID when creating the new store
   const newProduct = await Product.create({
     ...req.body,
     storeID: store._id,
-    storeName: store.storeName
+    storeName: store.storeName,
+    normalizedProductName: normalizedProductName
   });
 
   res.status(201).json({
@@ -92,6 +108,13 @@ exports.updateProduct = catchAsync(async (req, res, next) => {
     });
     filteredBody.photo = cloudinaryResult.secure_url;
     filteredBody.cloudinaryId = cloudinaryResult.public_id;
+    if (req.body.productName) {
+      filteredBody.normalizedProductName = req.body.productName
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase();
+    }
+
     product = await Product.findByIdAndUpdate(req.params.id, filteredBody, {
       new: true,
       runValidators: true
