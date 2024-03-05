@@ -33,6 +33,11 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: [true, 'A product must have a unit']
   },
+  genre: {
+    type: String,
+    enum: ['Foods', 'Devices', 'Stationery', 'Others'],
+    default: 'Others'
+  },
 
   createdAt: {
     type: Date,
