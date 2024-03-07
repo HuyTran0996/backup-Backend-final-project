@@ -1,34 +1,28 @@
 const mongoose = require('mongoose');
 
 const orderProductSchema = new mongoose.Schema({
-  orderID: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Order'
-    }
-  ],
-
-  productID: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Product',
-      select: false
-    }
-  ],
+  orderID: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Order'
+  },
+  productID: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Product',
+    select: false
+  },
   productName: { type: String },
   productPrice: { type: Number },
   quantity: {
     type: Number,
     required: [true, 'Please tell us your quantity number!']
   },
+  unit: { type: String },
 
-  storeID: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Store',
-      select: false
-    }
-  ],
+  storeID: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Store',
+    select: false
+  },
   storeName: { type: String },
 
   createdAt: {
@@ -37,7 +31,13 @@ const orderProductSchema = new mongoose.Schema({
     select: false
   },
 
-  updatedAt: { type: Date }
+  updatedAt: { type: Date },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+    select: false
+  },
+  deletedAt: Date
 });
 
 // QUERY MIDDLEWARE

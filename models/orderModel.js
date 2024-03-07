@@ -10,6 +10,7 @@ const orderSchema = new mongoose.Schema({
   ],
   customerName: { type: String },
   price: { type: Number },
+
   deliverTo: { type: String },
   orderDate: { type: Date },
   orderStatus: {

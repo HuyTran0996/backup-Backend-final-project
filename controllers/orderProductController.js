@@ -17,9 +17,7 @@ exports.getAllOrderProducts = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: 'success',
     results: orderProducts.length,
-    data: {
-      orderProducts
-    }
+    orderProducts
   });
 });
 
@@ -29,6 +27,7 @@ exports.createOrderProduct = catchAsync(async (req, res, next) => {
     productID: req.body.productID,
     productName: product.productName,
     productPrice: product.price,
+    unit: product.unit,
     quantity: req.body.quantity,
     storeID: product.storeID,
     storeName: product.storeName
@@ -58,6 +57,7 @@ exports.updateOrderProduct = catchAsync(async (req, res, next) => {
     productID: req.body.productID,
     productName: product.productName,
     productPrice: product.price,
+    unit: product.unit,
     quantity: req.body.quantity,
     productPricexQuantity: product.price * req.body.quantity,
     storeID: product.storeID,
@@ -77,9 +77,7 @@ exports.updateOrderProduct = catchAsync(async (req, res, next) => {
   }
   res.status(200).json({
     status: 'success',
-    data: {
-      orderProduct
-    }
+    orderProduct
   });
 });
 
