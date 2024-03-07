@@ -53,21 +53,20 @@ exports.getOrder = catchAsync(async (req, res, next) => {
 });
 
 exports.createOrder = catchAsync(async (req, res, next) => {
-  const orders = await Order.find({
+  const order = await Order.find({
     customerID: req.user.id,
     orderStatus: 'openToAdd',
     isDeleted: false
   });
-  if (orders.length === 1) {
+  if (order.length === 1) {
     // Order found, return it
     res.status(200).json({
       status: 'success',
-      data: {
-        orders
-      },
+      // order,
+      order: [order[0]],
       message: 'user has an open order already'
     });
-  } else if (orders.length === 0) {
+  } else if (order.length === 0) {
     const newOrder = await Order.create({
       customerID: req.user.id,
       customerName: req.user.name
@@ -75,9 +74,8 @@ exports.createOrder = catchAsync(async (req, res, next) => {
 
     res.status(201).json({
       status: 'success',
-      data: {
-        order: newOrder
-      }
+      // order: newOrder
+      order: [newOrder]
     });
   } else {
     //Error because user can have ONLY 1 open order so they can add product, if they not yet have an order, the function will check and create for them
