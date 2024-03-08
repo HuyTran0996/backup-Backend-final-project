@@ -73,7 +73,7 @@ exports.createStore = catchAsync(async (req, res, next) => {
     newStoreData.photo = cloudinaryResult.secure_url;
     newStoreData.cloudinaryId = cloudinaryResult.public_id;
   }
-  console.log('vô tới đây thì newStoreData là', newStoreData);
+
   const newStore = await Store.create(newStoreData);
 
   res.status(201).json({

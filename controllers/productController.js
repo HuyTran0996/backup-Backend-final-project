@@ -84,7 +84,7 @@ exports.createProduct = catchAsync(async (req, res, next) => {
 
 exports.updateProduct = catchAsync(async (req, res, next) => {
   // 1) Filtered out unwanted fields names that are not allowed to be updated
-  console.log('ádasd', req.body);
+
   const filteredBody = filterObj(
     req.body,
     'productName',
