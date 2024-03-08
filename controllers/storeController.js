@@ -111,9 +111,10 @@ exports.updateStore = catchAsync(async (req, res, next) => {
       runValidators: true
     }
   );
-  const product = await Product.updateMany({
-    storeName: storeUpdate.storeName
-  });
+  const product = await Product.updateMany(
+    { storeID: req.params.id },
+    { storeName: storeUpdate.storeName }
+  );
   if (!product) {
     return;
   }

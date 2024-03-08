@@ -7,8 +7,7 @@ const orderProductSchema = new mongoose.Schema({
   },
   productID: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Product',
-    select: false
+    ref: 'Product'
   },
   productName: { type: String },
   productPrice: { type: Number },
@@ -24,6 +23,11 @@ const orderProductSchema = new mongoose.Schema({
     select: false
   },
   storeName: { type: String },
+  orderProductStatus: {
+    type: String,
+    enum: ['sentOrderToStore', 'deliveredToApp', 'canceledByStore'],
+    default: 'sentOrderToStore'
+  },
 
   createdAt: {
     type: Date,

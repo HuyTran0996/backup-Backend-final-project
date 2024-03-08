@@ -59,9 +59,9 @@ exports.updateOrderProduct = catchAsync(async (req, res, next) => {
     productPrice: product.price,
     unit: product.unit,
     quantity: req.body.quantity,
-    productPricexQuantity: product.price * req.body.quantity,
     storeID: product.storeID,
-    storeName: product.storeName
+    storeName: product.storeName,
+    orderProductStatus: req.body.orderProductStatus
   };
 
   const orderProduct = await OrderProduct.findByIdAndUpdate(
