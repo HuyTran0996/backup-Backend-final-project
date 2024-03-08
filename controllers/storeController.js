@@ -51,19 +51,34 @@ exports.createStore = catchAsync(async (req, res, next) => {
   if (!user) {
     return next(new AppError('No user found with that ID', 404));
   }
+  const store = await Store.findOne({ ownerEmail: user._id });
+
+  if (store) {
+    return next(new AppError('A user can have only 1 store', 404));
+  }
 
   // Include the owner's ID when creating the new store
-  const newStore = await Store.create({
+  const newStoreData = {
     ...req.body,
     storeOwner: user._id,
-    ownerEmail: user.email
-  });
+    ownerEmail: user.email,
+    photo: '',
+    cloudinaryId: ''
+  };
+
+  if (req.file) {
+    const cloudinaryResult = await cloudinary.uploader.upload(req.file.path, {
+      upload_preset: process.env.CLOUDINARY_UPLOAD_PRESET
+    });
+    newStoreData.photo = cloudinaryResult.secure_url;
+    newStoreData.cloudinaryId = cloudinaryResult.public_id;
+  }
+  console.log('vô tới đây thì newStoreData là', newStoreData);
+  const newStore = await Store.create(newStoreData);
 
   res.status(201).json({
     status: 'success',
-    data: {
-      store: newStore
-    }
+    store: newStore
   });
 });
 
@@ -73,7 +88,7 @@ exports.updateStore = catchAsync(async (req, res, next) => {
 
   const store = await Store.findById(req.params.id);
   if (!store) {
-    return next(new AppError('No  store found with that ID', 404));
+    return next(new AppError('No store found with that ID', 404));
   }
   if (req.file) {
     // Check if cloudinaryId exists before attempting to delete old image
