@@ -20,9 +20,16 @@ const globalErrorHandler = require('./controllers/errorController');
 
 const app = express();
 // app.use(cors());
+// app.use(
+//   cors({
+//     origin: ['http://localhost:3000'],
+//     methods: ['POST', 'PUT', 'PATCH', 'GET', 'DELETE', 'OPTIONS', 'HEAD'],
+//     credentials: true
+//   })
+// );
 app.use(
   cors({
-    origin: ['http://localhost:3000'],
+    origin: ['https://marketplace-final-project.onrender.com/'],
     methods: ['POST', 'PUT', 'PATCH', 'GET', 'DELETE', 'OPTIONS', 'HEAD'],
     credentials: true
   })
