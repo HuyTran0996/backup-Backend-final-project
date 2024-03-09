@@ -12,21 +12,22 @@ const signToken = id => {
 
 const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
-  const cookieOptions = {
-    expires: new Date(
-      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
-    ),
-    httpOnly: true,
-    sameSite: 'None'
-  };
+
+  //Hiện tại cookie toàn bị trình duyệt xóa, nên chưa dùng được tính năng này
+  //////////////////////////////////////////////////////////////////////////////
+  // const cookieOptions = {
+  //   expires: new Date(
+  //     Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+  //   ),
+  //   httpOnly: true,
+  //   sameSite: 'None'
+  // };
   //cookieOptions.secure = true means only send cookie to HTTPS domain, activate this option in real app.
   // sameSite: 'Lax'
-  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+  // if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
 
-  res.setHeader('Cache-Control', 'public, max-age=3600'); // Adjust max-age as needed
-  res.setHeader('X-Content-Type-Options', 'nosniff');
-
-  res.cookie('jwt', token, cookieOptions);
+  // res.cookie('jwt', token, cookieOptions);
+  ////////////////////////////////////////////////////////////////////////////////////////////
 
   // Remove password from output
   user.password = undefined;
@@ -69,7 +70,7 @@ exports.login = catchAsync(async (req, res, next) => {
 });
 
 exports.logout = catchAsync(async (req, res, next) => {
-  res.cookie('jwt', '', { expires: new Date(0), httpOnly: true });
+  // res.cookie('jwt', '', { expires: new Date(0), httpOnly: true });
   res.status(200).json({ message: 'Logged out successfully' });
 });
 
@@ -97,7 +98,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   // 2) Verification token
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
-
+  console.log('decode là: ', decoded);
   // 3) Check if user still exists
   const currentUser = await User.findById(decoded.id);
   if (!currentUser) {
@@ -118,7 +119,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   // GRANT ACCESS TO PROTECTED ROUTE
   req.user = currentUser;
-  console.log(req.user);
+  // console.log(req.user);
   next();
 });
 

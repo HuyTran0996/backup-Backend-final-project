@@ -20,29 +20,23 @@ const globalErrorHandler = require('./controllers/errorController');
 
 const app = express();
 // app.use(cors());
-// app.use(
-//   cors({
-//     origin: ['http://localhost:3000'],
-//     methods: ['POST', 'PUT', 'PATCH', 'GET', 'DELETE', 'OPTIONS', 'HEAD'],
-//     credentials: true
-//   })
-// );
-
 app.use(
   cors({
-    origin: ['https://marketplace-final-project.onrender.com'],
+    origin: ['http://localhost:3000'],
     methods: ['POST', 'PUT', 'PATCH', 'GET', 'DELETE', 'OPTIONS', 'HEAD'],
     credentials: true
   })
 );
 
-app.options('*', cors());
+// app.use(
+//   cors({
+//     origin: ['https://marketplace-final-project.onrender.com'],
+//     methods: ['POST', 'PUT', 'PATCH', 'GET', 'DELETE', 'OPTIONS', 'HEAD'],
+//     credentials: true
+//   })
+// );
 
-app.use((req, res, next) => {
-  res.setHeader('Cache-Control', 'public, max-age=3600'); // Adjust max-age as needed
-  res.setHeader('X-Content-Type-Options', 'nosniff');
-  next();
-});
+app.options('*', cors());
 
 // Set security HTTP headers
 app.use(helmet());
@@ -78,7 +72,7 @@ app.use(
 // Test middleware
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
-  console.log('COOKIE', req.cookies);
+
   next();
 });
 
