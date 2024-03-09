@@ -22,6 +22,10 @@ const createSendToken = (user, statusCode, res) => {
   //cookieOptions.secure = true means only send cookie to HTTPS domain, activate this option in real app.
   // sameSite: 'Lax'
   if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+
+  res.setHeader('Cache-Control', 'public, max-age=3600'); // Adjust max-age as needed
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+
   res.cookie('jwt', token, cookieOptions);
 
   // Remove password from output
