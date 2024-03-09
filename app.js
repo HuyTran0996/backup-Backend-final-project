@@ -39,7 +39,8 @@ app.use(
 app.options('*', cors());
 
 app.use((req, res, next) => {
-  res.setHeader('Cache-Control', 'public, max-age=3600'); // Adjust the max-age as needed
+  res.setHeader('Cache-Control', 'public, max-age=3600'); // Adjust max-age as needed
+  res.setHeader('X-Content-Type-Options', 'nosniff');
   next();
 });
 
