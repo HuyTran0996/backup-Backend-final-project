@@ -29,7 +29,7 @@ const app = express();
 // );
 app.use(
   cors({
-    origin: ['https://marketplace-final-project.onrender.com/'],
+    origin: ['https://marketplace-final-project.onrender.com'],
     methods: ['POST', 'PUT', 'PATCH', 'GET', 'DELETE', 'OPTIONS', 'HEAD'],
     credentials: true
   })
