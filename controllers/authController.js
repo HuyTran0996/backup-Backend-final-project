@@ -4,14 +4,20 @@ const User = require('./../models/userModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 
-const signToken = id => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
+// const signToken = id => {
+//   return jwt.sign({ id }, process.env.JWT_SECRET, {
+//     expiresIn: process.env.JWT_EXPIRES_IN
+//   });
+// };
+const signToken = user => {
+  return jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN
   });
 };
 
 const createSendToken = (user, statusCode, res) => {
-  const token = signToken(user._id);
+  const token = signToken(user);
+  // const token = signToken(user._id);
 
   //Hiện tại cookie toàn bị trình duyệt xóa, nên chưa dùng được tính năng này
   //////////////////////////////////////////////////////////////////////////////
@@ -97,8 +103,9 @@ exports.protect = catchAsync(async (req, res, next) => {
   }
 
   // 2) Verification token
+  /////////NOTE: không bao giờ lưu các thông tin nhạy cảm như số tài khoảng, password vô token vì code thể decoded băng "npm i jwt-decode" mà không cần dùng process.env.JWT_SECRET
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
-  console.log('decode là: ', decoded);
+
   // 3) Check if user still exists
   const currentUser = await User.findById(decoded.id);
   if (!currentUser) {
