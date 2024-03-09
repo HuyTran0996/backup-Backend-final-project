@@ -27,6 +27,11 @@ const app = express();
 //     credentials: true
 //   })
 // );
+app.use((req, res, next) => {
+  res.setHeader('Cache-Control', 'public, max-age=3600'); // Adjust the max-age as needed
+  next();
+});
+
 app.use(
   cors({
     origin: ['https://marketplace-final-project.onrender.com'],
