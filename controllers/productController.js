@@ -110,18 +110,20 @@ exports.updateProduct = catchAsync(async (req, res, next) => {
     });
     filteredBody.photo = cloudinaryResult.secure_url;
     filteredBody.cloudinaryId = cloudinaryResult.public_id;
-    if (req.body.productName) {
-      filteredBody.normalizedProductName = req.body.productName
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .toLowerCase();
-    }
 
-    product = await Product.findByIdAndUpdate(req.params.id, filteredBody, {
-      new: true,
-      runValidators: true
-    });
+    // product = await Product.findByIdAndUpdate(req.params.id, filteredBody, {
+    //   new: true,
+    //   runValidators: true
+    // });
   }
+
+  if (req.body.productName) {
+    filteredBody.normalizedProductName = req.body.productName
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase();
+  }
+
   product = await Product.findByIdAndUpdate(req.params.id, filteredBody, {
     new: true,
     runValidators: true
