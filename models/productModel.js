@@ -4,8 +4,7 @@ const productSchema = new mongoose.Schema({
   storeID: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Store',
-      select: false
+      ref: 'Store'
     }
   ],
   storeName: { type: String },

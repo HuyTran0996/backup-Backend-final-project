@@ -9,6 +9,9 @@ const orderProductSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Product'
   },
+  storeID: {
+    type: mongoose.Schema.Types.ObjectId
+  },
   productName: { type: String },
   productPrice: { type: Number },
   quantity: {
@@ -17,11 +20,6 @@ const orderProductSchema = new mongoose.Schema({
   },
   unit: { type: String },
 
-  storeID: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Store',
-    select: false
-  },
   storeName: { type: String },
   orderProductStatus: {
     type: String,
