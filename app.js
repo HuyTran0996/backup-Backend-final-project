@@ -20,13 +20,13 @@ const globalErrorHandler = require('./controllers/errorController');
 
 const app = express();
 // app.use(cors());
-app.use(
-  cors({
-    origin: ['http://localhost:3000'],
-    methods: ['POST', 'PUT', 'PATCH', 'GET', 'DELETE', 'OPTIONS', 'HEAD'],
-    credentials: true
-  })
-);
+// app.use(
+//   cors({
+//     origin: ['http://localhost:3000'],
+//     methods: ['POST', 'PUT', 'PATCH', 'GET', 'DELETE', 'OPTIONS', 'HEAD'],
+//     credentials: true
+//   })
+// );
 
 // app.use(
 //   cors({
@@ -35,6 +35,26 @@ app.use(
 //     credentials: true
 //   })
 // );
+
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://marketplace-final-project.onrender.com'
+];
+
+// The corsOptions object is configured with a function for the origin property. This function checks if the request's origin is in the allowedOrigins array. If it is, the callback is called with null (indicating no error) and true (indicating the origin is allowed). If the origin is not in the array, an error is passed to the callback.
+
+const corsOptions = {
+  origin: function(origin, callback) {
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new AppError('Not allowed by CORS', 404));
+    }
+  },
+  methods: ['POST', 'PUT', 'PATCH', 'GET', 'DELETE', 'OPTIONS', 'HEAD'],
+  credentials: true
+};
+app.use(cors(corsOptions));
 
 app.options('*', cors());
 
@@ -45,7 +65,7 @@ app.use(morgan('dev'));
 
 // Limit 500 requests in 1 hour from same API
 const limiter = rateLimit({
-  max: 500,
+  max: 1000,
   windowMs: 60 * 60 * 1000,
   message: 'Too many requests, please try again in an hour'
 });
