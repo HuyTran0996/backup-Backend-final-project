@@ -11,12 +11,10 @@ router.route('/:id').get(productController.getProduct);
 router
   .route('/:id')
   .patch(productController.uploadProductPhoto, productController.updateProduct);
-router
-  .route('/:id')
-  .delete(
-    authController.protect,
-    authController.restrictTo('admin'),
-    productController.deleteProduct
-  );
+router.route('/:id').delete(
+  authController.protect,
+  // authController.restrictTo('admin'),
+  productController.deleteProduct
+);
 
 module.exports = router;
