@@ -39,7 +39,8 @@ const app = express();
 const allowedOrigins = [
   'http://localhost:3000',
   'https://marketplace-final-project.onrender.com',
-  'https://marketplace-front-end-2024.netlify.app'
+  'https://marketplace-front-end-2024.netlify.app',
+  'https://front-end--marketplace-front-end-2024.netlify.app'
 ];
 
 // The corsOptions object is configured with a function for the origin property. This function checks if the request's origin is in the allowedOrigins array. If it is, the callback is called with null (indicating no error) and true (indicating the origin is allowed). If the origin is not in the array, an error is passed to the callback.
