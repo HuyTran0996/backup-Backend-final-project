@@ -18,6 +18,7 @@ exports.uploadProductPhoto = multerUpload.single('image');
 
 exports.getAllProducts = catchAsync(async (req, res, next) => {
   let products;
+  let total;
   if (req.query.search) {
     const normalizedSearch = req.query.search
       .normalize('NFD')
@@ -26,7 +27,17 @@ exports.getAllProducts = catchAsync(async (req, res, next) => {
 
     const regex = new RegExp(normalizedSearch, 'i');
 
-    products = await Product.find({ normalizedProductName: { $regex: regex } });
+    const features = new APIFeatures(
+      Product.find({ normalizedProductName: { $regex: regex } }),
+      req.query
+    )
+      .limitFields()
+      .paginate();
+    products = await features.query;
+    ///show total result without .limitFields() and .paginate(); to calculate page in Fe
+    total = await Product.countDocuments({
+      normalizedProductName: { $regex: regex }
+    });
   } else {
     const features = new APIFeatures(Product.find(), req.query)
       .filter()
@@ -34,13 +45,21 @@ exports.getAllProducts = catchAsync(async (req, res, next) => {
       .limitFields()
       .paginate();
     products = await features.query;
+    ///show total result without .limitFields() and .paginate(); to calculate page in Fe
+    const total1 = new APIFeatures(
+      Product.countDocuments(),
+      req.query
+    ).filter();
+    const total2 = await total1.query;
+    total = total2.length;
   }
 
   // SEND RESPONSE
   res.status(200).json({
     status: 'success',
     results: products.length,
-    products
+    products,
+    total
   });
 });
 
