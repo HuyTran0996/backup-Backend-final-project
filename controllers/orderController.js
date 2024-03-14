@@ -20,11 +20,17 @@ exports.getAllOrders = catchAsync(async (req, res, next) => {
     .paginate();
   const orders = await features.query;
 
+  ///show total result without .limitFields() and .paginate(); to calculate page in Fe
+  const total1 = new APIFeatures(Order.countDocuments(), req.query).filter();
+  const total2 = await total1.query;
+  const total = total2.length;
+
   // SEND RESPONSE
   res.status(200).json({
     status: 'success',
     totalOrders: orders.length,
-    orders
+    orders,
+    total
   });
 });
 

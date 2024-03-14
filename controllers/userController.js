@@ -23,12 +23,17 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
     .limitFields()
     .paginate();
   const users = await features.query;
+  ///show total result without .limitFields() and .paginate(); to calculate page in Fe
+  const total1 = new APIFeatures(User.countDocuments(), req.query).filter();
+  const total2 = await total1.query;
+  const total = total2.length;
 
   // SEND RESPONSE
   res.status(200).json({
     status: 'success',
     totalUsers: users.length,
-    users
+    users,
+    total
   });
 });
 

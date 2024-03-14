@@ -13,11 +13,20 @@ exports.getAllOrderProducts = catchAsync(async (req, res, next) => {
     .paginate();
   const orderProducts = await features.query;
 
+  ///show total result without .limitFields() and .paginate(); to calculate page in Fe
+  const total1 = new APIFeatures(
+    OrderProduct.countDocuments(),
+    req.query
+  ).filter();
+  const total2 = await total1.query;
+  const total = total2.length;
+
   // SEND RESPONSE
   res.status(200).json({
     status: 'success',
     results: orderProducts.length,
-    orderProducts
+    orderProducts,
+    total
   });
 });
 
