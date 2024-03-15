@@ -87,7 +87,7 @@ app.use(xss());
 // Prevent parameter pollution
 app.use(
   hpp({
-    whitelist: ['price']
+    whitelist: ['price', 'orderStatus']
   })
 );
 
