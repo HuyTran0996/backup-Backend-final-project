@@ -1,3 +1,4 @@
+const sharp = require('sharp');
 const Product = require('../models/productModel');
 const Store = require('../models/storeModel');
 const APIFeatures = require('../utils/apiFeatures');
@@ -121,19 +122,39 @@ exports.updateProduct = catchAsync(async (req, res, next) => {
     // Check if cloudinaryId exists before attempting to delete old image
     if (product.cloudinaryId) {
       // Delete old image from cloudinary
-      await cloudinary.uploader.destroy(req.user.cloudinaryId);
+      await cloudinary.uploader.destroy(product.cloudinaryId);
     }
-    //upload new image
-    const cloudinaryResult = await cloudinary.uploader.upload(req.file.path, {
-      upload_preset: process.env.CLOUDINARY_UPLOAD_PRESET
-    });
+
+    const resizedImageBuffer = await sharp(req.file.path)
+      .resize({ width: 800 }) // Adjust width as needed
+      .jpeg({ quality: 80 }) // Adjust quality as needed to get close to 150KB
+      .toBuffer();
+    const cloudinaryResult = await cloudinary.uploader
+      .upload_stream(
+        {
+          resource_type: 'image',
+          upload_preset: process.env.CLOUDINARY_UPLOAD_PRESET
+        },
+        (error, result) => {
+          if (error) {
+            console.error(error);
+            // return;
+            return next(new AppError('Error re-size product image', 500));
+          }
+          // Use result.secure_url for the image URL
+        }
+      )
+      .end(resizedImageBuffer);
+
+    // // upload new image
+    // const cloudinaryResult = await cloudinary.uploader.upload(
+    //   resizedImageBuffer,
+    //   {
+    //     upload_preset: process.env.CLOUDINARY_UPLOAD_PRESET
+    //   }
+    // );
     filteredBody.photo = cloudinaryResult.secure_url;
     filteredBody.cloudinaryId = cloudinaryResult.public_id;
-
-    // product = await Product.findByIdAndUpdate(req.params.id, filteredBody, {
-    //   new: true,
-    //   runValidators: true
-    // });
   }
 
   if (req.body.productName) {
