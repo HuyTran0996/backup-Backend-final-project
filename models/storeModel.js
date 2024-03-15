@@ -33,8 +33,8 @@ const storeSchema = new mongoose.Schema({
     default: false
   },
   deletedAt: Date,
-  photo: { type: String },
-  cloudinaryId: { type: String }
+  photo: { type: String, default: '' },
+  cloudinaryId: { type: String, default: '' }
 });
 
 // QUERY MIDDLEWARE

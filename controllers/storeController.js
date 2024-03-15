@@ -74,29 +74,9 @@ exports.createStore = catchAsync(async (req, res, next) => {
   };
 
   if (req.file) {
-    const resizedImageBuffer = await sharp(req.file.path)
-      .resize({ width: 800 }) // Adjust width as needed
-      .jpeg({ quality: 80 }) // Adjust quality as needed to get close to 150KB
-      .toBuffer();
-    const cloudinaryResult = await cloudinary.uploader
-      .upload_stream(
-        {
-          resource_type: 'image',
-          upload_preset: process.env.CLOUDINARY_UPLOAD_PRESET
-        },
-        (error, result) => {
-          if (error) {
-            console.error(error);
-            // return;
-            return next(new AppError('Error re-size store image', 500));
-          }
-          // Use result.secure_url for the image URL
-        }
-      )
-      .end(resizedImageBuffer);
-    // const cloudinaryResult = await cloudinary.uploader.upload(req.file.path, {
-    //   upload_preset: process.env.CLOUDINARY_UPLOAD_PRESET
-    // });
+    const cloudinaryResult = await cloudinary.uploader.upload(req.file.path, {
+      upload_preset: process.env.CLOUDINARY_UPLOAD_PRESET
+    });
     newStoreData.photo = cloudinaryResult.secure_url;
     newStoreData.cloudinaryId = cloudinaryResult.public_id;
   }
@@ -124,30 +104,10 @@ exports.updateStore = catchAsync(async (req, res, next) => {
       await cloudinary.uploader.destroy(store.cloudinaryId);
     }
 
-    const resizedImageBuffer = await sharp(req.file.path)
-      .resize({ width: 800 }) // Adjust width as needed
-      .jpeg({ quality: 80 }) // Adjust quality as needed to get close to 150KB
-      .toBuffer();
-    const cloudinaryResult = await cloudinary.uploader
-      .upload_stream(
-        {
-          resource_type: 'image',
-          upload_preset: process.env.CLOUDINARY_UPLOAD_PRESET
-        },
-        (error, result) => {
-          if (error) {
-            console.error(error);
-            // return;
-            return next(new AppError('Error re-size store image', 500));
-          }
-          // Use result.secure_url for the image URL
-        }
-      )
-      .end(resizedImageBuffer);
     //upload new image
-    // const cloudinaryResult = await cloudinary.uploader.upload(req.file.path, {
-    //   upload_preset: process.env.CLOUDINARY_UPLOAD_PRESET
-    // });
+    const cloudinaryResult = await cloudinary.uploader.upload(req.file.path, {
+      upload_preset: process.env.CLOUDINARY_UPLOAD_PRESET
+    });
     filteredBody.photo = cloudinaryResult.secure_url;
     filteredBody.cloudinaryId = cloudinaryResult.public_id;
   }

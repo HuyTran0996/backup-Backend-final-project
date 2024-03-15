@@ -50,11 +50,11 @@ const productSchema = new mongoose.Schema({
     select: false
   },
   deletedAt: Date,
-  photo: { type: String },
-  cloudinaryId: { type: String }
+  photo: { type: String, default: '' },
+  cloudinaryId: { type: String, default: '' }
 });
 
-// QUERY MIDDLEWARE
+// QUERY MIDDLEWARENewPageCreateProduct
 
 productSchema.pre(/^find/, function(next) {
   this.find({
