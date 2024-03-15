@@ -64,7 +64,7 @@ exports.createOrder = catchAsync(async (req, res, next) => {
     orderStatus: 'openToAdd',
     isDeleted: false
   });
-  if (order.length === 1) {
+  if (order.length > 0) {
     // Order found, return it
     res.status(200).json({
       status: 'success',
