@@ -34,6 +34,14 @@ router
 router.delete('/deleteMe', authController.protect, userController.deleteMe);
 
 router
+  .route('/adminChangeUserPassword/:id')
+  .patch(
+    authController.protect,
+    authController.restrictTo('admin'),
+    userController.adminChangeUserPassword
+  );
+
+router
   .route('/:id')
   .delete(
     authController.protect,

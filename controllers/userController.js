@@ -154,6 +154,23 @@ exports.updateUser = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.adminChangeUserPassword = catchAsync(async (req, res, next) => {
+  const user = await User.findById(req.params.id).select('+password');
+  if (!user) {
+    return next(new AppError('No  store found with that ID', 404));
+  }
+
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+
+  await user.save();
+
+  res.status(200).json({
+    status: 'success',
+    user
+  });
+});
+
 exports.adminDeleteUser = catchAsync(async (req, res, next) => {
   // delete store of user
   const store = await Store.findOneAndUpdate(
