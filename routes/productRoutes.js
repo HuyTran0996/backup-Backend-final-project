@@ -4,7 +4,8 @@ const authController = require('../controllers/authController');
 
 const router = express.Router();
 
-router.route('/').get(authController.protect, productController.getAllProducts);
+router.route('/').get(productController.getAllProducts);
+// router.route('/').get(authController.protect, productController.getAllProducts);
 router.route('/').post(authController.protect, productController.createProduct);
 
 router.route('/:id').get(productController.getProduct);
