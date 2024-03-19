@@ -18,8 +18,35 @@ const filterObj = (obj, ...allowedFields) => {
 
 exports.uploadStorePhoto = multerUpload.single('image');
 
+// exports.getAllStores = catchAsync(async (req, res, next) => {
+//   const features = new APIFeatures(Store.find(), req.query)
+//     .filter()
+//     .sort()
+//     .limitFields()
+//     .paginate();
+//   const stores = await features.query;
+
+//   ///show total result without .limitFields() and .paginate(); to calculate page in Fe
+//   const total1 = new APIFeatures(Store.countDocuments(), req.query).filter();
+//   const total2 = await total1.query;
+//   const total = total2.length;
+
+//   // SEND RESPONSE
+//   res.status(200).json({
+//     status: 'success',
+//     totalStores: stores.length,
+//     stores,
+//     total
+//   });
+// });
+
 exports.getAllStores = catchAsync(async (req, res, next) => {
-  const features = new APIFeatures(Store.find(), req.query)
+  const features = new APIFeatures(
+    Store.find({ isDeleted: [false, true] }).setOptions({
+      bypassIsDeletedFilter: true
+    }),
+    req.query
+  )
     .filter()
     .sort()
     .limitFields()
@@ -27,7 +54,12 @@ exports.getAllStores = catchAsync(async (req, res, next) => {
   const stores = await features.query;
 
   ///show total result without .limitFields() and .paginate(); to calculate page in Fe
-  const total1 = new APIFeatures(Store.countDocuments(), req.query).filter();
+  const total1 = new APIFeatures(
+    Store.countDocuments({ isDeleted: [false, true] }).setOptions({
+      bypassIsDeletedFilter: true
+    }),
+    req.query
+  ).filter();
   const total2 = await total1.query;
   const total = total2.length;
 
@@ -160,5 +192,23 @@ exports.deleteStore = catchAsync(async (req, res, next) => {
   res.status(204).json({
     status: 'success',
     data: null
+  });
+});
+
+exports.adminActivateStore = catchAsync(async (req, res, next) => {
+  // delete store of user
+
+  const store = await Store.findByIdAndUpdate(req.params.id, {
+    isDeleted: false
+  }).setOptions({
+    bypassIsDeletedFilter: true
+  });
+  if (!store) {
+    return next(new AppError('No store found with that ID', 404));
+  }
+
+  res.status(200).json({
+    status: 'success',
+    store
   });
 });

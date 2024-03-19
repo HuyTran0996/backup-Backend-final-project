@@ -75,9 +75,16 @@ userSchema.pre('save', function(next) {
   next();
 });
 
+// userSchema.pre(/^find/, function(next) {
+//   // this points to the current query
+//   this.find({ isDeleted: false });
+//   next();
+// });
 userSchema.pre(/^find/, function(next) {
-  // this points to the current query
-  this.find({ isDeleted: false });
+  // Check if the query has a specific option set to bypass the isDeleted filter
+  if (!this.getOptions().bypassIsDeletedFilter) {
+    this.find({ isDeleted: false });
+  }
   next();
 });
 

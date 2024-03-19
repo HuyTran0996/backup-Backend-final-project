@@ -15,7 +15,7 @@ router.patch(
   authController.updatePassword
 );
 
-router.route('/').get(userController.getAllUsers);
+router.route('/').get(authController.protect, userController.getAllUsers);
 
 router.route('/myInfo').get(authController.protect, userController.getMyInfo);
 router.route('/:id').get(userController.getUser);
@@ -39,6 +39,14 @@ router
     authController.protect,
     authController.restrictTo('admin'),
     userController.adminChangeUserPassword
+  );
+
+router
+  .route('/adminActivateUser/:id')
+  .get(
+    authController.protect,
+    authController.restrictTo('admin'),
+    userController.adminActivateUser
   );
 
 router

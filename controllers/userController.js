@@ -17,15 +17,45 @@ const filterObj = (obj, ...allowedFields) => {
 
 exports.uploadUserPhoto = multerUpload.single('image');
 
+// exports.getAllUsers = catchAsync(async (req, res, next) => {
+//   const features = new APIFeatures(User.find(), req.query)
+//     .filter()
+//     .sort()
+//     .limitFields()
+//     .paginate();
+//   const users = await features.query;
+//   ///show total result without .limitFields() and .paginate(); to calculate page in Fe
+//   const total1 = new APIFeatures(User.countDocuments(), req.query).filter();
+//   const total2 = await total1.query;
+//   const total = total2.length;
+
+//   // SEND RESPONSE
+//   res.status(200).json({
+//     status: 'success',
+//     totalUsers: users.length,
+//     users,
+//     total
+//   });
+// });
+
 exports.getAllUsers = catchAsync(async (req, res, next) => {
-  const features = new APIFeatures(User.find(), req.query)
+  const features = new APIFeatures(
+    User.find({ isDeleted: [false, true] }).setOptions({
+      bypassIsDeletedFilter: true
+    }),
+    req.query
+  )
     .filter()
     .sort()
     .limitFields()
     .paginate();
   const users = await features.query;
-  ///show total result without .limitFields() and .paginate(); to calculate page in Fe
-  const total1 = new APIFeatures(User.countDocuments(), req.query).filter();
+  const total1 = new APIFeatures(
+    User.countDocuments({ isDeleted: [false, true] }).setOptions({
+      bypassIsDeletedFilter: true
+    }),
+    req.query
+  ).filter();
   const total2 = await total1.query;
   const total = total2.length;
 
@@ -185,6 +215,34 @@ exports.adminDeleteUser = catchAsync(async (req, res, next) => {
   res.status(204).json({
     status: 'success',
     data: null
+  });
+});
+
+exports.adminActivateUser = catchAsync(async (req, res, next) => {
+  // delete store of user
+  let user;
+  const store = await Store.findOneAndUpdate(
+    { storeOwner: req.params.id },
+    { isDeleted: false }
+  ).setOptions({
+    bypassIsDeletedFilter: true
+  });
+  if (!store) {
+    user = await User.findByIdAndUpdate(req.params.id, {
+      isDeleted: false
+    }).setOptions({
+      bypassIsDeletedFilter: true
+    });
+  }
+  user = await User.findByIdAndUpdate(req.params.id, {
+    isDeleted: false
+  }).setOptions({
+    bypassIsDeletedFilter: true
+  });
+
+  res.status(200).json({
+    status: 'success',
+    user
   });
 });
 

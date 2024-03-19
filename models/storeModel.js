@@ -29,8 +29,7 @@ const storeSchema = new mongoose.Schema({
     select: false
   },
   isDeleted: {
-    type: Boolean,
-    default: false
+    type: Boolean
   },
   deletedAt: Date,
   photo: { type: String, default: '' },
@@ -39,11 +38,19 @@ const storeSchema = new mongoose.Schema({
 
 // QUERY MIDDLEWARE
 
-storeSchema.pre(/^find/, function(next) {
-  this.find({
-    isDeleted: false
-  });
+// storeSchema.pre(/^find/, function(next) {
+//   this.find({
+//     isDeleted: false
+//   });
 
+//   next();
+// });
+
+storeSchema.pre(/^find/, function(next) {
+  // Check if the query has a specific option set to bypass the isDeleted filter
+  if (!this.getOptions().bypassIsDeletedFilter) {
+    this.find({ isDeleted: false });
+  }
   next();
 });
 
