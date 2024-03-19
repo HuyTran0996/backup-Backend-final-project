@@ -14,6 +14,22 @@ router
 //this routes use ID of review
 router.route('/:id').patch(reviewController.updateReview);
 
+router
+  .route('/getAllReviewsForAdmin')
+  .get(
+    authController.protect,
+    authController.restrictTo('admin'),
+    reviewController.getAllReviewsForAdmin
+  );
+
+router
+  .route('/adminActivateReview/:id')
+  .get(
+    authController.protect,
+    authController.restrictTo('admin'),
+    reviewController.adminActivateReview
+  );
+
 //only admin can delete review so if reviewer use bad language, store owner can report reviewer to admin
 router
   .route('/:id')

@@ -28,6 +28,37 @@ exports.getAllReviews = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.getAllReviewsForAdmin = catchAsync(async (req, res, next) => {
+  const features = new APIFeatures(
+    Review.find({ isDeleted: [false, true] }).setOptions({
+      bypassIsDeletedFilter: true
+    }),
+    req.query
+  )
+    .filter()
+    .sort()
+    .limitFields()
+    .paginate();
+  const reviews = await features.query;
+
+  const total1 = new APIFeatures(
+    Review.countDocuments({ isDeleted: [false, true] }).setOptions({
+      bypassIsDeletedFilter: true
+    }),
+    req.query
+  ).filter();
+  const total2 = await total1.query;
+  const total = total2.length;
+
+  // SEND RESPONSE
+  res.status(200).json({
+    status: 'success',
+    results: reviews.length,
+    reviews,
+    total
+  });
+});
+
 exports.createReview = catchAsync(async (req, res, next) => {
   const product = await Product.findById(req.params.id);
   if (!product) {
@@ -79,5 +110,21 @@ exports.adminDeleteReview = catchAsync(async (req, res, next) => {
   res.status(204).json({
     status: 'success',
     data: null
+  });
+});
+
+exports.adminActivateReview = catchAsync(async (req, res, next) => {
+  const review = await Review.findByIdAndUpdate(req.params.id, {
+    isDeleted: false
+  }).setOptions({
+    bypassIsDeletedFilter: true
+  });
+  if (!review) {
+    return next(new AppError('No review found with that ID', 404));
+  }
+
+  res.status(200).json({
+    status: 'success',
+    review
   });
 });

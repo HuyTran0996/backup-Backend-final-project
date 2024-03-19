@@ -4,16 +4,14 @@ const reviewSchema = new mongoose.Schema({
   productID: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Product',
-      select: false
+      ref: 'Product'
     }
   ],
   productName: { type: String },
   reviewerID: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-      select: false
+      ref: 'User'
     }
   ],
   reviewerName: { type: String },
@@ -31,8 +29,7 @@ const reviewSchema = new mongoose.Schema({
 
   isDeleted: {
     type: Boolean,
-    default: false,
-    select: false
+    default: false
   },
   updatedAt: Date,
   deletedAt: Date
@@ -40,11 +37,19 @@ const reviewSchema = new mongoose.Schema({
 
 // QUERY MIDDLEWARE
 
-reviewSchema.pre(/^find/, function(next) {
-  this.find({
-    isDeleted: false
-  });
+// reviewSchema.pre(/^find/, function(next) {
+//   this.find({
+//     isDeleted: false
+//   });
 
+//   next();
+// });
+
+reviewSchema.pre(/^find/, function(next) {
+  // Check if the query has a specific option set to bypass the isDeleted filter
+  if (!this.getOptions().bypassIsDeletedFilter) {
+    this.find({ isDeleted: false });
+  }
   next();
 });
 
