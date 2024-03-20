@@ -5,11 +5,13 @@ const authController = require('../controllers/authController');
 const router = express.Router();
 
 router.route('/').get(authController.protect, orderController.getAllOrders);
+
 router
   .route('/createOrder')
   .post(authController.protect, orderController.createOrder);
 
 router.route('/:id').get(authController.protect, orderController.getOrder);
+
 router.route('/:id').patch(orderController.updateOrder);
 router
   .route('/cancelOrder/:id')

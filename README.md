@@ -33,25 +33,41 @@ Login to the app
 
 User can update password
 
-### 4. router.get('/');
+### 4. router.patch('/forgotPassword');
+
+User can get new password if they forgot
+
+### 5. router.get('/');
 
 fetch all users (for admin dashboard)
 
-### 5. router.get('/:id')
+### 6. router.get('/:id')
 
 fetch a user by user ID
 
-### 6. router.patch('/:id')
+### 7. router.get('/myInfo')
 
-update user information
+fetch info of user currently login
 
-### 7. router.delete('/deleteMe')
+### 8. router.patch('/:id')
+
+update user information by user ID
+
+### 9. router.patch('/updateMe')
+
+update user currently login
+
+### 10. router.delete('/deleteMe')
 
 user can delete their own account
 
-### 8. router.delete('/:id')
+### 11. router.delete('/:id')
 
 Admin can delete any user
+
+### 11. router.get('/adminActivateUser/:id')
+
+Admin can re-activate a user if they are deleted
 
 ## Stores:
 
@@ -63,19 +79,23 @@ fetch all stores
 
 ### 2. router.post('/')
 
-user can create their store
+user can create their store, (a user can have only one store)
 
 ### 3. router.get('/:id')
 
-fetch a store
+fetch a store by store ID
 
 ### 4. router.patch('/:id')
 
-update store informations
+update store informations by store ID
 
 ### 5. router.delete('/:id')
 
-Admin can delete any store
+Admin can delete any store by store ID
+
+### 6. router.get('/adminActivateStore/:id')
+
+Admin can re-activate a store that was deleted by store ID
 
 ## Reviews
 
@@ -87,15 +107,19 @@ fetch all reviews of a product
 
 ### 2. router.post('/:id')
 
-create a review, this route uses ID of the product
+create a review for a product by product ID
 
 ### 3. router.patch('/:id')
 
-update a review, this routes use ID of review
+update a review by review ID
 
 ### 4. router.delete('/:id')
 
-only admin can delete review so if reviewer use bad language, store owner can report reviewer to admin
+only admin can delete review by review ID
+
+### 5. router.get('/adminActivateReview/:id')
+
+only admin can re-activate review that was deleted by review ID
 
 ## Product
 
@@ -111,15 +135,16 @@ create a product
 
 ### 3. router.get('/:id')
 
-get a product
+get a product by product ID
 
 ### 4. router.patch('/:id')
 
-update a product
+update a product by product ID
 
 ### 5. router.delete('/:id')
 
 admin can delete any product
+store owner can delete their products
 
 ## Order
 
@@ -129,21 +154,25 @@ admin can delete any product
 
 getAllOrders
 
-### 2. router.post('/')
+### 2. router.post('/createOrder')
 
 createOrder
 
 ### 3. router.get('/:id')
 
-getOrder
+getOrder by order ID
 
 ### 4. router.patch('/:id')
 
-updateOrder
+updateOrder by order ID
 
-### 5. router.delete('/:id')
+### 5. router.patch('/cancelOrder/:id')
 
-adminDeleteOrder
+cancel order by order ID
+
+### 6. router.delete('/:id')
+
+adminDeleteOrder by order ID
 
 //only admin can delete Order
 
