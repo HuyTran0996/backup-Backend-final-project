@@ -7,7 +7,12 @@ const handleCastErrorDB = err => {
 
 const handleDuplicateFieldsDB = err => {
   // const value = err.errmsg.match(/(["'])(\\?.)*?\1/)[0];
-  const value = err.message.match(/(["'])(\\?.)*?\1/)[0];
+  // const value = err.message.match(/(["'])(\\?.)*?\1/)[0];
+
+  const value = (err.message.match(/\{([^}]+)\}/g) || [''])[0].replace(
+    /[\{\}]/g,
+    ''
+  );
   console.log(value);
 
   const message = `Duplicate field value: ${value}. Please use another value!`;
@@ -70,7 +75,7 @@ module.exports = (err, req, res, next) => {
     let error = { ...err };
     /////chưa hiểu vì sao chổ này đã spread err ra rồi nhưng lại vẫn phải add message bằng cách này, không add thì respone của production không có message, CẦN XEM LẠI
     error.message = err.message;
-
+    console.log(error);
     if (error.name === 'CastError') error = handleCastErrorDB(error);
     if (error.code === 11000) error = handleDuplicateFieldsDB(error);
     if (error.name === 'ValidationError') {
