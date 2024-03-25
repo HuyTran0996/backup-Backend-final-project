@@ -19,7 +19,6 @@ const createSendToken = (user, statusCode, res) => {
   const token = signToken(user);
   // const token = signToken(user._id);
 
-  //Hiện tại cookie toàn bị trình duyệt xóa, nên chưa dùng được tính năng này
   //////////////////////////////////////////////////////////////////////////////
   const cookieOptions = {
     expires: new Date(
@@ -77,7 +76,6 @@ exports.login = catchAsync(async (req, res, next) => {
 });
 
 exports.logout = catchAsync(async (req, res, next) => {
-  res.cookie('jwt', '', { expires: new Date(0), httpOnly: true });
   res.status(200).json({ message: 'Logged out successfully' });
 });
 
