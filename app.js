@@ -46,6 +46,10 @@ const allowedOrigins = [
 
 const corsOptions = {
   origin: function(origin, callback) {
+    //to test on postman, do this line, remove when deploy
+    if (!origin) {
+      return callback(null, true);
+    }
     if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {

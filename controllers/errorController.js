@@ -68,7 +68,7 @@ module.exports = (err, req, res, next) => {
   } else if (process.env.NODE_ENV === 'production') {
     let error = { ...err };
     /////chưa hiểu vì sao chổ này đã spread err ra rồi nhưng lại vẫn phải add message bằng cách này, không add thì respone của production không có message, CẦN XEM LẠI
-    error.message = err.message;
+    // error.message = err.message;
 
     if (error.name === 'CastError') error = handleCastErrorDB(error);
     if (error.code === 11000) error = handleDuplicateFieldsDB(error);
