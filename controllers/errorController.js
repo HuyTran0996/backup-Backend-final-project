@@ -1,4 +1,4 @@
-const AppError = require('./../utils/appError');
+const AppError = require('../utils/appError');
 
 const handleCastErrorDB = err => {
   const message = `Invalid ${err.path}: ${err.value}.`;
@@ -6,7 +6,8 @@ const handleCastErrorDB = err => {
 };
 
 const handleDuplicateFieldsDB = err => {
-  const value = err.errmsg.match(/(["'])(\\?.)*?\1/)[0];
+  // const value = err.errmsg.match(/(["'])(\\?.)*?\1/)[0];
+  const value = err.message.match(/(["'])(\\?.)*?\1/)[0];
   console.log(value);
 
   const message = `Duplicate field value: ${value}. Please use another value!`;
@@ -68,7 +69,7 @@ module.exports = (err, req, res, next) => {
   } else if (process.env.NODE_ENV === 'production') {
     let error = { ...err };
     /////chưa hiểu vì sao chổ này đã spread err ra rồi nhưng lại vẫn phải add message bằng cách này, không add thì respone của production không có message, CẦN XEM LẠI
-    // error.message = err.message;
+    error.message = err.message;
 
     if (error.name === 'CastError') error = handleCastErrorDB(error);
     if (error.code === 11000) error = handleDuplicateFieldsDB(error);
