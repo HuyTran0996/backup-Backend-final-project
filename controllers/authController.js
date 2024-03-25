@@ -21,18 +21,19 @@ const createSendToken = (user, statusCode, res) => {
 
   //Hiện tại cookie toàn bị trình duyệt xóa, nên chưa dùng được tính năng này
   //////////////////////////////////////////////////////////////////////////////
-  // const cookieOptions = {
-  //   expires: new Date(
-  //     Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
-  //   ),
-  //   httpOnly: true,
-  //   sameSite: 'None'
-  // };
-  //cookieOptions.secure = true means only send cookie to HTTPS domain, activate this option in real app.
+  const cookieOptions = {
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+    ),
+    httpOnly: true,
+    sameSite: 'None'
+  };
+  cookieOptions.secure = true;
+  // means only send cookie to HTTPS domain, activate this option in real app.
   // sameSite: 'Lax'
-  // if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
 
-  // res.cookie('jwt', token, cookieOptions);
+  res.cookie('jwt', token, cookieOptions);
   ////////////////////////////////////////////////////////////////////////////////////////////
 
   // Remove password from output
