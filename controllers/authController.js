@@ -90,12 +90,9 @@ exports.protect = catchAsync(async (req, res, next) => {
   ) {
     token = req.headers.authorization.split(' ')[1];
   }
-
-  //Deploy nhớ xóa chổ này
-  // admin 65dc83fd233c0a3452b081c3
-  //user1 65dee16ac3d7d9a0150ed1aa
-  // token = signToken('65dee16ac3d7d9a0150ed1aa');
-  // token = signToken('65dc83fd233c0a3452b081c3');
+  if (req.cookies.jwt) {
+    token = req.cookies.jwt;
+  }
 
   if (!token) {
     return next(
