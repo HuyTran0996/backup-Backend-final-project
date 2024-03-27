@@ -99,7 +99,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   }
 
   // 2) Verification token
-  /////////NOTE: không bao giờ lưu các thông tin nhạy cảm như số tài khoảng, password vô token vì code thể decoded băng "npm i jwt-decode" mà không cần dùng process.env.JWT_SECRET
+
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
   // 3) Check if user still exists
@@ -122,13 +122,12 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   // GRANT ACCESS TO PROTECTED ROUTE
   req.user = currentUser;
-  // console.log(req.user);
+
   next();
 });
 
 exports.restrictTo = (...roles) => {
   return (req, res, next) => {
-    // roles ['admin', 'lead-guide']. role='user'
     if (!roles.includes(req.user.role)) {
       return next(
         new AppError('You do not have permission to perform this action', 403)

@@ -30,7 +30,6 @@ router
     reviewController.adminActivateReview
   );
 
-//only admin can delete review so if reviewer use bad language, store owner can report reviewer to admin
 router
   .route('/:id')
   .delete(

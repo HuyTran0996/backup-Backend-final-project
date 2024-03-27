@@ -18,28 +18,6 @@ const filterObj = (obj, ...allowedFields) => {
 
 exports.uploadStorePhoto = multerUpload.single('image');
 
-// exports.getAllStores = catchAsync(async (req, res, next) => {
-//   const features = new APIFeatures(Store.find(), req.query)
-//     .filter()
-//     .sort()
-//     .limitFields()
-//     .paginate();
-//   const stores = await features.query;
-
-//   ///show total result without .limitFields() and .paginate(); to calculate page in Fe
-//   const total1 = new APIFeatures(Store.countDocuments(), req.query).filter();
-//   const total2 = await total1.query;
-//   const total = total2.length;
-
-//   // SEND RESPONSE
-//   res.status(200).json({
-//     status: 'success',
-//     totalStores: stores.length,
-//     stores,
-//     total
-//   });
-// });
-
 exports.getAllStores = catchAsync(async (req, res, next) => {
   const features = new APIFeatures(
     Store.find({ isDeleted: [false, true] }).setOptions({
@@ -137,7 +115,6 @@ exports.updateStore = catchAsync(async (req, res, next) => {
     return next(new AppError('No store found with that ID', 404));
   }
   if (req.file) {
-    // Check if cloudinaryId exists before attempting to delete old image
     if (store.cloudinaryId) {
       // Delete old image from cloudinary
       await cloudinary.uploader.destroy(store.cloudinaryId);

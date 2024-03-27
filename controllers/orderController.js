@@ -65,10 +65,8 @@ exports.createOrder = catchAsync(async (req, res, next) => {
     isDeleted: false
   });
   if (order.length > 0) {
-    // Order found, return it
     res.status(200).json({
       status: 'success',
-      // order,
       order: [order[0]],
       message: 'user has an open order already'
     });
@@ -80,7 +78,6 @@ exports.createOrder = catchAsync(async (req, res, next) => {
 
     res.status(201).json({
       status: 'success',
-      // order: newOrder
       order: [newOrder]
     });
   } else {
