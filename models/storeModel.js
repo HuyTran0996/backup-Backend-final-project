@@ -36,7 +36,8 @@ const storeSchema = new mongoose.Schema({
     select: false
   },
   isDeleted: {
-    type: Boolean
+    type: Boolean,
+    default: false
   },
   deletedAt: Date,
   photo: { type: String, default: '' },
