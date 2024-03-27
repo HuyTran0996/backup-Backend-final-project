@@ -19,6 +19,22 @@ const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
 
 const app = express();
+// app.use(cors());
+// app.use(
+//   cors({
+//     origin: ['http://localhost:3000'],
+//     methods: ['POST', 'PUT', 'PATCH', 'GET', 'DELETE', 'OPTIONS', 'HEAD'],
+//     credentials: true
+//   })
+// );
+
+// app.use(
+//   cors({
+//     origin: ['https://marketplace-final-project.onrender.com'],
+//     methods: ['POST', 'PUT', 'PATCH', 'GET', 'DELETE', 'OPTIONS', 'HEAD'],
+//     credentials: true
+//   })
+// );
 
 const allowedOrigins = [
   'http://localhost:3000',
@@ -26,9 +42,11 @@ const allowedOrigins = [
   'https://marketplace-front-end-2024.netlify.app'
 ];
 
+// The corsOptions object is configured with a function for the origin property. This function checks if the request's origin is in the allowedOrigins array. If it is, the callback is called with null (indicating no error) and true (indicating the origin is allowed). If the origin is not in the array, an error is passed to the callback.
+
 const corsOptions = {
   origin: function(origin, callback) {
-    //to test on local, do this line, remove when deploy
+    //to test on postman, do this line, remove when deploy
     // if (!origin) {
     //   return callback(null, true);
     // }

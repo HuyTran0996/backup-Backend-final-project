@@ -127,8 +127,8 @@ exports.updateProduct = catchAsync(async (req, res, next) => {
     }
     // Resize image using sharp
     const resizedImageBuffer = await sharp(req.file.path)
-      .resize(450, 450)
-      .jpeg({ quality: 80 })
+      .resize(450, 450) // Adjust width as needed
+      .jpeg({ quality: 80 }) // Adjust quality to reduce file size
       .toBuffer();
 
     const uploadPromise = new Promise((resolve, reject) => {
@@ -157,6 +157,7 @@ exports.updateProduct = catchAsync(async (req, res, next) => {
     } catch (error) {
       console.error('Upload error:', error);
       return next(new AppError('Error re-size image', 500));
+      // Handle error appropriately
     }
   }
 

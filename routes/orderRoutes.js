@@ -17,6 +17,8 @@ router
   .route('/cancelOrder/:id')
   .patch(authController.protect, orderController.cancelOrder);
 
+//only admin can delete Order
+
 router
   .route('/:id')
   .delete(
