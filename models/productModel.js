@@ -1,12 +1,10 @@
 const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema({
-  storeID: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Store'
-    }
-  ],
+  storeID: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Store'
+  },
   storeName: { type: String },
   productName: {
     type: String,

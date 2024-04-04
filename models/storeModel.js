@@ -1,13 +1,11 @@
 const mongoose = require('mongoose');
 
 const storeSchema = new mongoose.Schema({
-  storeOwner: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-      select: false
-    }
-  ],
+  storeOwner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    select: false
+  },
   ownerEmail: {
     type: String
     // required: [true, 'you must provide email of owner']

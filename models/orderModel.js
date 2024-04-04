@@ -1,13 +1,11 @@
 const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema({
-  customerID: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-      select: false
-    }
-  ],
+  customerID: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    select: false
+  },
   customerName: { type: String },
   price: { type: Number },
 
