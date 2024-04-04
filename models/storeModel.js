@@ -1,13 +1,6 @@
 const mongoose = require('mongoose');
 
 const storeSchema = new mongoose.Schema({
-  //trả storeOwner, ownerEmail cách làm này là chưa tối ưu, chỉ cần 1 object user._id là đủ, khi trả respone ta có thể dùng populate của mongo để trả full thông tin của user trong respone mà ko cần phải tạo lẻ tẻ user.email,....
-  // cái populate này nên chạy ở file schema của chính schema này, ví dụ
-  // storeSchema.pre(/^find/, function(next) {
-  //   this.populate({
-  //     path: "storeOwner" });
-  //   next();
-  // });
   storeOwner: [
     {
       type: mongoose.Schema.Types.ObjectId,
