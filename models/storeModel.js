@@ -17,6 +17,7 @@ const storeSchema = new mongoose.Schema({
     trim: true,
     maxlength: [40, 'A store name must have less or equal then 40 characters']
   },
+  normalizedStoreName: { type: String, select: false },
   address: {
     type: String,
     trim: true

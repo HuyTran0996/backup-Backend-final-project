@@ -1,4 +1,5 @@
 const sharp = require('sharp');
+const normalize = require('../utils/normalize');
 const User = require('./../models/userModel');
 const Store = require('../models/storeModel');
 const catchAsync = require('./../utils/catchAsync');
@@ -17,49 +18,47 @@ const filterObj = (obj, ...allowedFields) => {
 
 exports.uploadUserPhoto = multerUpload.single('image');
 
-// exports.getAllUsers = catchAsync(async (req, res, next) => {
-//   const features = new APIFeatures(User.find(), req.query)
-//     .filter()
-//     .sort()
-//     .limitFields()
-//     .paginate();
-//   const users = await features.query;
-//   ///show total result without .limitFields() and .paginate(); to calculate page in Fe
-//   const total1 = new APIFeatures(User.countDocuments(), req.query).filter();
-//   const total2 = await total1.query;
-//   const total = total2.length;
-
-//   // SEND RESPONSE
-//   res.status(200).json({
-//     status: 'success',
-//     totalUsers: users.length,
-//     users,
-//     total
-//   });
-// });
-
 exports.getAllUsers = catchAsync(async (req, res, next) => {
-  const features = new APIFeatures(
-    User.find({ isDeleted: [false, true] }).setOptions({
-      bypassIsDeletedFilter: true
-    }),
-    req.query
-  )
-    .filter()
-    .sort()
-    .limitFields()
-    .paginate();
-  const users = await features.query;
-  const total1 = new APIFeatures(
-    User.countDocuments({ isDeleted: [false, true] }).setOptions({
-      bypassIsDeletedFilter: true
-    }),
-    req.query
-  ).filter();
-  const total2 = await total1.query;
-  const total = total2.length;
+  let users;
+  let total;
+  if (req.query.search) {
+    const normalizedSearch = normalize(req.query.search);
 
-  // SEND RESPONSE
+    const regex = new RegExp(normalizedSearch, 'i');
+
+    const features = new APIFeatures(
+      User.find({ normalizedEmail: { $regex: regex } }),
+      req.query
+    )
+      .limitFields()
+      .paginate();
+    users = await features.query;
+    ///show total result without .limitFields() and .paginate(); to calculate page in Fe
+    total = await User.countDocuments({
+      normalizedProductName: { $regex: regex }
+    });
+  } else {
+    const features = new APIFeatures(
+      User.find({ isDeleted: [false, true] }).setOptions({
+        bypassIsDeletedFilter: true
+      }),
+      req.query
+    )
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
+    users = await features.query;
+    const total1 = new APIFeatures(
+      User.countDocuments({ isDeleted: [false, true] }).setOptions({
+        bypassIsDeletedFilter: true
+      }),
+      req.query
+    ).filter();
+    const total2 = await total1.query;
+    total = total2.length;
+  }
+
   res.status(200).json({
     status: 'success',
     totalUsers: users.length,

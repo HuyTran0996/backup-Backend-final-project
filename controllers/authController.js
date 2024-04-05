@@ -1,5 +1,6 @@
 const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
+const normalize = require('../utils/normalize');
 const User = require('./../models/userModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
@@ -49,6 +50,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     //this is to prevent hackers add their accounts as admin role in request body
     name: req.body.name,
     email: req.body.email,
+    normalizedEmail: normalize(req.body.email),
     phone: req.body.phone,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm

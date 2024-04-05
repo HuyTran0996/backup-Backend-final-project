@@ -7,6 +7,7 @@ const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const cloudinary = require('../utils/cloudinary');
 const multerUpload = require('../utils/multer');
+const normalize = require('../utils/normalize');
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -22,10 +23,7 @@ exports.getAllProducts = catchAsync(async (req, res, next) => {
   let products;
   let total;
   if (req.query.search) {
-    const normalizedSearch = req.query.search
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .toLowerCase();
+    const normalizedSearch = normalize(req.query.search);
 
     const regex = new RegExp(normalizedSearch, 'i');
 
@@ -47,6 +45,7 @@ exports.getAllProducts = catchAsync(async (req, res, next) => {
       .limitFields()
       .paginate();
     products = await features.query;
+    console.log(products);
     ///show total result without .limitFields() and .paginate(); to calculate page in Fe
     const total1 = new APIFeatures(
       Product.countDocuments(),
@@ -85,10 +84,8 @@ exports.createProduct = catchAsync(async (req, res, next) => {
       new AppError('You have no store, create your store first', 404)
     );
   }
-  const normalizedProductName = req.body.productName
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase();
+
+  const normalizedProductName = normalize(req.body.productName);
   // Include the owner's ID when creating the new store
   const newProduct = await Product.create({
     ...req.body,
@@ -162,10 +159,7 @@ exports.updateProduct = catchAsync(async (req, res, next) => {
   }
 
   if (req.body.productName) {
-    filteredBody.normalizedProductName = req.body.productName
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .toLowerCase();
+    filteredBody.normalizedProductName = normalize(req.body.productName);
   }
 
   product = await Product.findByIdAndUpdate(req.params.id, filteredBody, {

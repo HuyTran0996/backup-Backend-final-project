@@ -7,6 +7,7 @@ const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const cloudinary = require('../utils/cloudinary');
 const multerUpload = require('../utils/multer');
+const normalize = require('../utils/normalize');
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -18,50 +19,50 @@ const filterObj = (obj, ...allowedFields) => {
 
 exports.uploadStorePhoto = multerUpload.single('image');
 
-// exports.getAllStores = catchAsync(async (req, res, next) => {
-//   const features = new APIFeatures(Store.find(), req.query)
-//     .filter()
-//     .sort()
-//     .limitFields()
-//     .paginate();
-//   const stores = await features.query;
-
-//   ///show total result without .limitFields() and .paginate(); to calculate page in Fe
-//   const total1 = new APIFeatures(Store.countDocuments(), req.query).filter();
-//   const total2 = await total1.query;
-//   const total = total2.length;
-
-//   // SEND RESPONSE
-//   res.status(200).json({
-//     status: 'success',
-//     totalStores: stores.length,
-//     stores,
-//     total
-//   });
-// });
-
 exports.getAllStores = catchAsync(async (req, res, next) => {
-  const features = new APIFeatures(
-    Store.find({ isDeleted: [false, true] }).setOptions({
-      bypassIsDeletedFilter: true
-    }),
-    req.query
-  )
-    .filter()
-    .sort()
-    .limitFields()
-    .paginate();
-  const stores = await features.query;
+  let stores;
+  let total;
+  if (req.query.search) {
+    const normalizedSearch = normalize(req.query.search);
 
-  ///show total result without .limitFields() and .paginate(); to calculate page in Fe
-  const total1 = new APIFeatures(
-    Store.countDocuments({ isDeleted: [false, true] }).setOptions({
-      bypassIsDeletedFilter: true
-    }),
-    req.query
-  ).filter();
-  const total2 = await total1.query;
-  const total = total2.length;
+    const regex = new RegExp(normalizedSearch, 'i');
+
+    const features = new APIFeatures(
+      Store.find({
+        normalizedStoreName: { $regex: regex }
+      }),
+      req.query
+    )
+      .limitFields()
+      .paginate();
+    stores = await features.query;
+    ///show total result without .limitFields() and .paginate(); to calculate page in Fe
+    total = await Store.countDocuments({
+      normalizedStoreName: { $regex: regex }
+    });
+  } else {
+    const features = new APIFeatures(
+      Store.find({ isDeleted: [false, true] }).setOptions({
+        bypassIsDeletedFilter: true
+      }),
+      req.query
+    )
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
+    stores = await features.query;
+
+    ///show total result without .limitFields() and .paginate(); to calculate page in Fe
+    const total1 = new APIFeatures(
+      Store.countDocuments({ isDeleted: [false, true] }).setOptions({
+        bypassIsDeletedFilter: true
+      }),
+      req.query
+    ).filter();
+    const total2 = await total1.query;
+    total = total2.length;
+  }
 
   // SEND RESPONSE
   res.status(200).json({
@@ -90,37 +91,20 @@ exports.createStore = catchAsync(async (req, res, next) => {
   if (!user) {
     return next(new AppError('No user found with that ID', 404));
   }
-  const store = await Store.findOne({ ownerEmail: user._id });
+  const store = await Store.findOne({ ownerEmail: user.email });
 
   if (store) {
     return next(new AppError('A user can have only 1 store', 404));
   }
 
-  // Include the owner's ID when creating the new store
-  //trả storeOwner, ownerEmail cách làm này là chưa tối ưu, chỉ cần 1 object user._id là đủ, khi trả respone ta có thể dùng populate của mongo để trả full thông tin của user trong respone mà ko cần phải tạo lẻ tẻ user.email,....
-  // cái populate này nên chạy ở file schema của chính schema này, ví dụ
-  // storeSchema.pre(/^find/, function(next) {
-  //   this.populate({
-  //     path: "storeOwner" });
-  //   next();
-  // });
-  const newStoreData = {
+  const newStore = await Store.create({
     ...req.body,
     storeOwner: user._id,
     ownerEmail: user.email,
+    normalizedStoreName: normalize(req.body.storeName),
     photo: '',
     cloudinaryId: ''
-  };
-
-  if (req.file) {
-    const cloudinaryResult = await cloudinary.uploader.upload(req.file.path, {
-      upload_preset: process.env.CLOUDINARY_UPLOAD_PRESET
-    });
-    newStoreData.photo = cloudinaryResult.secure_url;
-    newStoreData.cloudinaryId = cloudinaryResult.public_id;
-  }
-
-  const newStore = await Store.create(newStoreData);
+  });
 
   res.status(201).json({
     status: 'success',
@@ -150,6 +134,11 @@ exports.updateStore = catchAsync(async (req, res, next) => {
     filteredBody.photo = cloudinaryResult.secure_url;
     filteredBody.cloudinaryId = cloudinaryResult.public_id;
   }
+
+  if (req.body.storeName) {
+    filteredBody.normalizedStoreName = normalize(req.body.storeName);
+  }
+
   const storeUpdate = await Store.findByIdAndUpdate(
     req.params.id,
     filteredBody,
