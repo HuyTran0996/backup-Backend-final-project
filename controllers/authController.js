@@ -85,6 +85,8 @@ exports.logout = catchAsync(async (req, res, next) => {
 exports.protect = catchAsync(async (req, res, next) => {
   // 1) Getting token and check of it's there
   let token;
+  // read req.headers.authorization.startsWith('Bearer') to test the backend on postman
+  // read req.cookies.jwt to test on real app
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith('Bearer')
