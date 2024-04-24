@@ -45,7 +45,7 @@ exports.getAllProducts = catchAsync(async (req, res, next) => {
       .limitFields()
       .paginate();
     products = await features.query;
-    console.log(products);
+
     ///show total result without .limitFields() and .paginate(); to calculate page in Fe
     const total1 = new APIFeatures(
       Product.countDocuments(),
